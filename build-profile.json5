@@ -1,6 +1,20 @@
 {
   "app": {
-    "signingConfigs": [],
+    "signingConfigs": [
+      {
+        "name": "default",
+        "type": "HarmonyOS",
+        "material": {
+          "certpath": "/Users/donaldlu/.ohos/config/default_WebFontSizeScale__0yvsnrzoLN5P8ldYbyVfekVp3r_DiaqkiIizbmbgRg=.cer",
+          "keyAlias": "debugKey",
+          "keyPassword": "0000001B47C10ACE6398BCF9EC57E239122B41D9767DD7D3449414E8AF002193034D998EE5504C75CFF9A6",
+          "profile": "/Users/donaldlu/.ohos/config/default_WebFontSizeScale__0yvsnrzoLN5P8ldYbyVfekVp3r_DiaqkiIizbmbgRg=.p7b",
+          "signAlg": "SHA256withECDSA",
+          "storeFile": "/Users/donaldlu/.ohos/config/default_WebFontSizeScale__0yvsnrzoLN5P8ldYbyVfekVp3r_DiaqkiIizbmbgRg=.p12",
+          "storePassword": "0000001BF4C3C2CF8F59795490EEE049C9D5C0CB545BA98DE0265F9C8C92F0B4B1A6ECA55CF0973E494231"
+        }
+      }
+    ],
     "products": [
       {
         "name": "default",
