@@ -1,4 +1,5 @@
 import { router } from '@kit.ArkUI';
+import { ParamInfo } from './WebFontSizeScalePage';
 
 interface WebUrlItem {
   title: string;
@@ -17,10 +18,12 @@ struct Index {
     Column() {
       Row() {
         Text('测试缩放')
-          .fontSize(18)
+          .fontSize(22)
           .fontColor('#000000');
-      }.width('100%')
-      .height(44)
+      }
+      .justifyContent(FlexAlign.Center)
+      .width('100%')
+      .height(50)
 
       List() {
         ForEach(this.webUrlList, (item: WebUrlItem) => {
@@ -34,7 +37,10 @@ struct Index {
             .height(50)
             .width('100%')
             .onClick(() => {
-              router.pushUrl({ url: 'pages/WebFontSizeScalePage', params: item.url });
+              router.pushUrl({
+                url: 'pages/WebFontSizeScalePage',
+                params: new ParamInfo(item.title, item.url),
+              });
             });
           }
           .margin({ left: 16, right: 16 });

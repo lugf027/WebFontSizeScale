@@ -1,15 +1,25 @@
+export class ParamInfo {
+  name: string = '';
+  url: string = '';
+
+  constructor(name: string, url: string) {
+    this.name = name;
+    this.url = url;
+  }
+}
+
 @Entry
 @ComponentV2
 struct WebFontSizeScalePage {
-  @Local message: string = 'Hello World';
+  @Local paramInfo: ParamInfo = this.getUIContext().getRouter().getParams() as ParamInfo;
 
   aboutToAppear(): void {
-
+    console.log(`aboutToAppear targetUrl:${JSON.stringify(this.paramInfo)}`)
   }
 
   build() {
     RelativeContainer() {
-      Text(this.message)
+      Text(this.paramInfo.name)
         .id('WebFontSizeScalePageHelloWorld')
         .fontSize($r('app.float.page_text_font_size'))
         .fontWeight(FontWeight.Bold)
@@ -18,7 +28,6 @@ struct WebFontSizeScalePage {
           middle: { anchor: '__container__', align: HorizontalAlign.Center }
         })
         .onClick(() => {
-          this.message = 'Welcome';
         })
     }
     .height('100%')
