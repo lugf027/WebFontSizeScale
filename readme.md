@@ -76,6 +76,12 @@ Web({
 
 
 
+我们参考[使用DevTools工具调试前端页面](https://developer.huawei.com/consumer/cn/doc/harmonyos-guides/web-debugging-with-devtools)，在`chrome://inspect/#devices`调试看了web日志，如下：
+
+![Clipboard_Screenshot_1769495012](./assets/Clipboard_Screenshot_1769495012.png)
+
+
+
 ## 三、问题&诉求
 
 ### 1、鸿蒙系统的Web内核，支持该JS脚本缩放Web网页字体大小吗？
