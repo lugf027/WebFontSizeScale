@@ -41,12 +41,38 @@ struct WebFontSizeScalePage {
         src: this.paramInfo.url,
         controller: this.controller
       })
+        .runJavaScriptOnDocumentStart([
+          {
+            script: getCommonJSScaleCode('runJavaScriptOnDocumentStart'),
+            scriptRules: ['*'],
+          }
+        ]) // 这个会按数组顺序注入js脚本
         .onControllerAttached(() => {
           try {
-            MyLog.i(TAG, `onControllerAttached execute url:${this.paramInfo.url}`)
-            this.controller.loadUrl(this.paramInfo.url)
+            MyLog.i(TAG, `onControllerAttached load url:${this.paramInfo.url}`)
+            this.controller.runJavaScript(getCommonJSScaleCode('onControllerAttached'), (error, data) => {
+              MyLog.i(TAG, `onControllerAttached runJavaScript end, error:${JSON.stringify(error)} data:${JSON.stringify(data)}`)
+            })
           } catch (error) {
             MyLog.e(TAG, `onControllerAttached loadUrl error:${error}`)
+          }
+        })
+        .onLoadIntercept((event) => {
+          MyLog.i(TAG, `onLoadIntercept ${JSON.stringify(event)}`)
+          if (event) {
+            this.controller.runJavaScript(getCommonJSScaleCode('onLoadIntercept'), (error, data) => {
+              MyLog.i(TAG,
+                `onLoadIntercept runJavaScript end, error:${JSON.stringify(error)} data:${JSON.stringify(data)}`)
+            })
+          }
+          return false;
+        })
+        .onPageBegin(async (event) => {
+          MyLog.i(TAG, `onPageBegin ${JSON.stringify(event)}`)
+          if (event) {
+            this.controller.runJavaScript(getCommonJSScaleCode('onPageBegin'), (error, data) => {
+              MyLog.i(TAG, `onPageBegin runJavaScript end, error:${JSON.stringify(error)} data:${JSON.stringify(data)}`)
+            })
           }
         })
         .width('100%')
@@ -63,33 +89,19 @@ struct WebFontSizeScalePage {
         .darkMode(WebDarkMode.Auto)
         .domStorageAccess(true)
         .multiWindowAccess(false)
-        .runJavaScriptOnDocumentStart([
-          {
-            script: getCommonJSScaleCode('runJavaScriptOnDocumentStart'),
-            scriptRules: ['*'],
-          }
-        ]) // 这个会按数组顺序注入js脚本
-        .onPageBegin(async (event) => {
-          MyLog.i(TAG, `onPageBegin ${JSON.stringify(event)}`)
-          if (event) {
-            this.controller.runJavaScript(getCommonJSScaleCode('onPageBegin'), (error, data) => {
-              MyLog.i(TAG, `onPageBegin runJavaScript end, error:${JSON.stringify(error)} data:${JSON.stringify(data)}`)
-            })
-          }
-        });
+
     }
     .height('100%')
     .width('100%')
   }
 }
 
-
 function getCommonJSScaleCode(step: string): string {
   const fontScale = 1.5
   return `
     (function() {
         // 确认当前执行时机：DOM 元素已创建，但内容未加载
-        console.log('=== Font Scale Script Execution Timing Check ===');
+        console.log('=== Font Scale Script Execution Timing Check (step:${step}) ===');
         console.log('- document.documentElement exists:', !!document.documentElement);
         console.log('- document.readyState:', document.readyState);
         console.log('- document.body exists:', !!document.body);
@@ -113,7 +125,7 @@ function getCommonJSScaleCode(step: string): string {
         // 设置网页字体缩放比例
         window.imaSetFontScale = function(scale) {
             console.log('==============================');
-            console.log('setCommonJSScaleCode start, scale:', scale);
+            console.log('setCommonJSScaleCode start (step:${step}), scale:', scale);
             console.log('- Before - style:', document.documentElement.style);
             console.log('- Before - webkitTextSizeAdjust:', document.documentElement.style.webkitTextSizeAdjust);
             console.log('- Before - textSizeAdjust:', document.documentElement.style.textSizeAdjust);
@@ -123,7 +135,7 @@ function getCommonJSScaleCode(step: string): string {
             document.documentElement.style.textSizeAdjust = (scale * 100) + '%';
 
             console.log('==============================');
-            console.log('setCommonJSScaleCode finish, scale:', scale);
+            console.log('setCommonJSScaleCode finish (step:${step}), scale:', scale);
             console.log('- After - style:', document.documentElement.style);
             console.log('- After - webkitTextSizeAdjust:', document.documentElement.style.webkitTextSizeAdjust);
             console.log('- After - textSizeAdjust:', document.documentElement.style.textSizeAdjust);
@@ -141,7 +153,28 @@ function getCommonJSScaleCode(step: string): string {
         console.log('Font scale applied successfully:');
         console.log('- webkitTextSizeAdjust:', appliedWebkitScale);
         console.log('- textSizeAdjust:', appliedTextScale);
-        console.log('=== End Font Scale Script ===');
+        console.log('=== End Font Scale Script (step:${step}) ===');
+    })();
+`.trim()
+}
+
+/**
+ * 在iOS上能缩放字体的脚本
+ * 注入时机：https://developer.apple.com/documentation/webkit/wkuserscriptinjectiontime/atdocumentstart
+ * 时机注释：A constant to inject the script after the creation of the webpage’s document element, but before loading any other content.
+ * @returns 缩放字体，JS注入的脚本
+ */
+function getCommonJSSimpleScaleCode(): string {
+  const fontScale = 1.5
+  return `
+    (function() {
+        // 设置网页字体缩放比例
+        window.imaSetFontScale = function(scale) {
+            document.documentElement.style.webkitTextSizeAdjust = (scale * 100) + '%';
+            document.documentElement.style.textSizeAdjust = (scale * 100) + '%';
+        };
+        // 初始化时应用缩放
+        window.imaSetFontScale(${fontScale});
     })();
 `.trim()
 }
