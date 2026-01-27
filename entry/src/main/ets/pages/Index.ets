@@ -1,5 +1,6 @@
 import { router } from '@kit.ArkUI';
 import { ParamInfo } from './WebFontSizeScalePage';
+import { webview } from '@kit.ArkWeb';
 
 interface WebUrlItem {
   title: string;
@@ -13,6 +14,10 @@ struct Index {
     { title: '字节头条', url: 'https://m.toutiao.com/article/7598492576735396358/?upstream_biz=toutiao_pc' },
     { title: '腾讯新闻', url: 'https://view.inews.qq.com/a/20251229A065AF00?scene=ima' },
   ];
+
+  aboutToAppear(): void {
+    webview.WebviewController.setWebDebuggingAccess(true)
+  }
 
   build() {
     Column() {

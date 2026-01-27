@@ -1,4 +1,5 @@
 import { webview } from "@kit.ArkWeb";
+import { MyLog } from "../utils/MyLog";
 
 export class ParamInfo {
   name: string = '';
@@ -10,6 +11,11 @@ export class ParamInfo {
   }
 }
 
+const TAG = 'WebFontSizeScalePage'
+
+/**
+ * web的生命周期：https://developer.huawei.com/consumer/cn/doc/harmonyos-guides/web-event-sequence
+ */
 @Entry
 @ComponentV2
 struct WebFontSizeScalePage {
@@ -17,7 +23,7 @@ struct WebFontSizeScalePage {
   private controller: webview.WebviewController = new webview.WebviewController();
 
   aboutToAppear(): void {
-    console.log(`aboutToAppear targetUrl:${JSON.stringify(this.paramInfo)}`)
+    MyLog.i(TAG, `aboutToAppear targetUrl:${JSON.stringify(this.paramInfo)}`)
   }
 
   build() {
@@ -35,6 +41,14 @@ struct WebFontSizeScalePage {
         src: this.paramInfo.url,
         controller: this.controller
       })
+        .onControllerAttached(() => {
+          try {
+            MyLog.i(TAG, `onControllerAttached execute url:${this.paramInfo.url}`)
+            this.controller.loadUrl(this.paramInfo.url)
+          } catch (error) {
+            MyLog.e(TAG, `onControllerAttached loadUrl error:${error}`)
+          }
+        })
         .width('100%')
         .layoutWeight(1)
         .javaScriptAccess(true)
@@ -49,10 +63,16 @@ struct WebFontSizeScalePage {
         .darkMode(WebDarkMode.Auto)
         .domStorageAccess(true)
         .multiWindowAccess(false)
-        .runJavaScriptOnDocumentStart([]) // 这个会按数组顺序注入js脚本
+        // .runJavaScriptOnDocumentStart([
+        //   {
+        //     script: getCommonJSScaleCode(),
+        //     scriptRules: ['*'],
+        //   }
+        // ]) // 这个会按数组顺序注入js脚本
         .onPageBegin(async (event) => {
+          MyLog.i(TAG, `onPageBegin ${JSON.stringify(event)}`)
           if (event) {
-
+            this.controller.runJavaScriptExt(getCommonJSScaleCode())
           }
         });
     }

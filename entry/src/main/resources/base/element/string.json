@@ -1,6 +1,10 @@
 {
   "string": [
     {
+      "name": "internet_permission_reason",
+      "value": "需要网络权限来访问在线服务和获取响应"
+    },
+    {
       "name": "module_desc",
       "value": "module description"
     },
