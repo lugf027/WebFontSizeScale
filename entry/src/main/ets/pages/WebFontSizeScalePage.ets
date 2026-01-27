@@ -100,6 +100,8 @@ function getCommonJSScaleCode(step: string): string {
   const fontScale = 1.5
   return `
     (function() {
+        console.log('==============================');
+        console.log('==============================');
         // 确认当前执行时机：DOM 元素已创建，但内容未加载
         console.log('=== Font Scale Script Execution Timing Check (step:${step}) ===');
         console.log('- document.documentElement exists:', !!document.documentElement);
@@ -154,6 +156,9 @@ function getCommonJSScaleCode(step: string): string {
         console.log('- webkitTextSizeAdjust:', appliedWebkitScale);
         console.log('- textSizeAdjust:', appliedTextScale);
         console.log('=== End Font Scale Script (step:${step}) ===');
+        console.log('==============================');
+        console.log('==============================');
+        console.log('==============================');
     })();
 `.trim()
 }
