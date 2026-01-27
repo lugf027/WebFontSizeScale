@@ -86,4 +86,11 @@ Web({
 
 ### 1、鸿蒙系统的Web内核，支持该JS脚本缩放Web网页字体大小吗？
 
+```typescript
+document.documentElement.style.webkitTextSizeAdjust = '150%';
+document.documentElement.style. textSizeAdjust = '150%';
+```
+
 ### 2、鸿蒙系统的Web内核，有什么方案可以实现缩放字体大小？
+
+麻烦大佬们帮给个缩放字体大小的方案（最好不是直接scale整个页面那种）
