@@ -63,16 +63,18 @@ struct WebFontSizeScalePage {
         .darkMode(WebDarkMode.Auto)
         .domStorageAccess(true)
         .multiWindowAccess(false)
-        // .runJavaScriptOnDocumentStart([
-        //   {
-        //     script: getCommonJSScaleCode(),
-        //     scriptRules: ['*'],
-        //   }
-        // ]) // 这个会按数组顺序注入js脚本
+        .runJavaScriptOnDocumentStart([
+          {
+            script: getCommonJSScaleCode('runJavaScriptOnDocumentStart'),
+            scriptRules: ['*'],
+          }
+        ]) // 这个会按数组顺序注入js脚本
         .onPageBegin(async (event) => {
           MyLog.i(TAG, `onPageBegin ${JSON.stringify(event)}`)
           if (event) {
-            this.controller.runJavaScriptExt(getCommonJSScaleCode())
+            this.controller.runJavaScript(getCommonJSScaleCode('onPageBegin'), (error, data) => {
+              MyLog.i(TAG, `onPageBegin runJavaScript end, error:${JSON.stringify(error)} data:${JSON.stringify(data)}`)
+            })
           }
         });
     }
@@ -82,7 +84,7 @@ struct WebFontSizeScalePage {
 }
 
 
-function getCommonJSScaleCode(): string {
+function getCommonJSScaleCode(step: string): string {
   const fontScale = 1.5
   return `
     (function() {
