@@ -12,6 +12,7 @@ export class ParamInfo {
 }
 
 const TAG = 'WebFontSizeScalePage'
+const FONT_SCALE_RATE = 1.5;
 
 /**
  * web的生命周期：https://developer.huawei.com/consumer/cn/doc/harmonyos-guides/web-event-sequence
@@ -29,7 +30,7 @@ struct WebFontSizeScalePage {
   build() {
     Column() {
       Row() {
-        Text(this.paramInfo.name)
+        Text(`${this.paramInfo.name} (缩放:${FONT_SCALE_RATE})`)
           .fontSize(22)
           .fontColor('#000000');
       }
@@ -97,7 +98,7 @@ struct WebFontSizeScalePage {
 }
 
 function getCommonJSScaleCode(step: string): string {
-  const fontScale = 1.5
+  const fontScale = FONT_SCALE_RATE
   return `
     (function() {
         console.log('==============================');
@@ -170,7 +171,7 @@ function getCommonJSScaleCode(step: string): string {
  * @returns 缩放字体，JS注入的脚本
  */
 function getCommonJSSimpleScaleCode(): string {
-  const fontScale = 1.5
+  const fontScale = FONT_SCALE_RATE
   return `
     (function() {
         // 设置网页字体缩放比例
